@@ -67,12 +67,16 @@ module.exports = function wdm(compiler, opts) {
   setFs(context, compiler);
 
   return Object.assign(middleware(context), {
-    close(callback) {
+    close(callback, kill) {
       // eslint-disable-next-line no-param-reassign
       callback = callback || noop;
 
       if (context.watching) {
-        context.watching.close(callback);
+        if (kill) {
+          context.watching.kill(callback);
+        } else {
+          context.watching.close(callback);
+        }
       } else {
         callback();
       }
